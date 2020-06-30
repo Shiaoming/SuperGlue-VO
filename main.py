@@ -3,7 +3,7 @@ import cv2
 
 from norm_visual_odometry import PinholeCamera, VisualOdometry
 from sp_visual_odometry import VisualOdometry as sp_VisualOdometry
-from sp_visual_odometry import VisualOdometry as spglue_VisualOdometry
+from spglue_visual_odometry import VisualOdometry as spglue_VisualOdometry
 
 # kitti sequence
 Kitti_path = "/mnt/data/datasets/public/KITTI/KITTI/odometry"
@@ -24,7 +24,7 @@ else:
 pose_path = Kitti_path + '/poses/' + Num + '.txt'
 vo = VisualOdometry(cam, pose_path)
 sp_vo = sp_VisualOdometry(cam, pose_path)
-spg_vo = sp_VisualOdometry(cam, pose_path)
+spg_vo = spglue_VisualOdometry(cam, pose_path)
 
 traj = np.zeros((600, 600, 3), dtype=np.uint8)
 

@@ -55,19 +55,25 @@ class VisualOdometry:
             }
         }
 
-        device = 'cuda' if torch.cuda.is_available() and cuda else 'cpu'
+        self.device = 'cuda' if torch.cuda.is_available() and cuda else 'cpu'
 
         self.keys = ['keypoints', 'scores', 'descriptors']
-        self.matching = Matching(config).eval().to(device)
+        self.matching = Matching(config).eval().to(self.device)
 
         with open(annotations) as f:
             self.annotations = f.readlines()
 
     def featureTracking(self):
         # This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
+        self.new_frame = torch.from_numpy(self.new_frame / 255.).float()[None, None].to(self.device)
         pred = self.matching({**self.last_data, 'image1': self.new_frame})
-        kp1 = self.last_data['keypoints0'][0].cpu().numpy()
-        kp2 = pred['keypoints1'][0].cpu().numpy()
+        kpts0 = self.last_data['keypoints0'][0].cpu().numpy()
+        kpts1 = pred['keypoints1'][0].cpu().numpy()
+        matches = pred['matches0'][0].cpu().numpy()
+
+        valid = matches > -1
+        kp1 = kpts0[valid]
+        kp2 = kpts1[matches[valid]]
         return kp1, kp2
 
     def getAbsoluteScale(self, frame_id):  # specialized for KITTI odometry dataset
@@ -84,9 +90,11 @@ class VisualOdometry:
 
     def processFirstFrame(self):
         # This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
+        self.new_frame = torch.from_numpy(self.new_frame / 255.).float()[None, None].to(self.device)
         self.last_data = self.matching.superpoint({'image': self.new_frame})
         self.last_data = {k + '0': self.last_data[k] for k in self.keys}
         self.last_data['image0'] = self.new_frame
+        self.px_ref = self.last_data['keypoints0']
         self.frame_stage = STAGE_SECOND_FRAME
 
     def processSecondFrame(self):
