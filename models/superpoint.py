@@ -43,7 +43,9 @@
 from pathlib import Path
 import torch
 from torch import nn
-
+"""
+This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
+"""
 def simple_nms(scores, nms_radius: int):
     """ Fast Non-maximum suppression to remove nearby points """
     assert(nms_radius >= 0)

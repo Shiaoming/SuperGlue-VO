@@ -44,7 +44,9 @@ from copy import deepcopy
 from pathlib import Path
 import torch
 from torch import nn
-
+"""
+This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
+"""
 
 def MLP(channels: list, do_bn=True):
     """ Multi-layer perceptron """

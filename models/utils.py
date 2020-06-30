@@ -53,7 +53,9 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
 
-
+"""
+This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
+"""
 class AverageTimer:
     """ Class to help manage printing simple timing of code execution. """
 

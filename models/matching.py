@@ -45,6 +45,9 @@ import torch
 from .superpoint import SuperPoint
 from .superglue import SuperGlue
 
+"""
+This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
+"""
 
 class Matching(torch.nn.Module):
     """ Image Matching Frontend (SuperPoint + SuperGlue) """

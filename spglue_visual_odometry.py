@@ -36,6 +36,7 @@ class VisualOdometry:
         self.pp = (cam.cx, cam.cy)
         self.trueX, self.trueY, self.trueZ = 0, 0, 0
 
+        # This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
         nms_dist = 4
         conf_thresh = 0.015
         sinkhorn_iterations = 20
@@ -63,6 +64,7 @@ class VisualOdometry:
             self.annotations = f.readlines()
 
     def featureTracking(self):
+        # This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
         pred = self.matching({**self.last_data, 'image1': self.new_frame})
         kp1 = self.last_data['keypoints0'][0].cpu().numpy()
         kp2 = pred['keypoints1'][0].cpu().numpy()
@@ -81,6 +83,7 @@ class VisualOdometry:
         return np.sqrt((x - x_prev) * (x - x_prev) + (y - y_prev) * (y - y_prev) + (z - z_prev) * (z - z_prev))
 
     def processFirstFrame(self):
+        # This code is from https://github.com/magicleap/SuperGluePretrainedNetwork
         self.last_data = self.matching.superpoint({'image': self.new_frame})
         self.last_data = {k + '0': self.last_data[k] for k in self.keys}
         self.last_data['image0'] = self.new_frame
