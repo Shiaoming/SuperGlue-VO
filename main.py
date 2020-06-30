@@ -5,23 +5,24 @@ from norm_visual_odometry import PinholeCamera, VisualOdometry
 from sp_visual_odometry import VisualOdometry as sp_VisualOdometry
 
 # kitti sequence
+Kitti_path = "/mnt/data/datasets/public/KITTI/KITTI/odometry"
 Num = "00"
 
 # for each camera model
 if Num in ["00", "01", "02"]:
-    cam0_2 = PinholeCamera(1241.0, 376.0, 718.8560, 718.8560, 607.1928, 185.2157)
+    cam = PinholeCamera(1241.0, 376.0, 718.8560, 718.8560, 607.1928, 185.2157)
 elif Num in ["03"]:
-    cam3 = PinholeCamera(1242.0, 375.0, 721.5377, 721.5377, 609.5593, 172.854)
+    cam = PinholeCamera(1242.0, 375.0, 721.5377, 721.5377, 609.5593, 172.854)
 elif Num in ["04", "05", "06", "07", "08", "09", "10"]:
-    cam4_10 = PinholeCamera(1226.0, 370.0, 707.0912, 707.0912, 601.8873, 183.1104)
+    cam = PinholeCamera(1226.0, 370.0, 707.0912, 707.0912, 601.8873, 183.1104)
 else:
     print("Error.")
     exit()
 
 # pose_path
-pose_path = '/home/user/Desktop/dataset/poses/' + Num + '.txt'
-vo = VisualOdometry(cam4, pose_path)
-sp_vo = sp_VisualOdometry(cam4, pose_path)
+pose_path = Kitti_path + '/poses/' + Num + '.txt'
+vo = VisualOdometry(cam, pose_path)
+sp_vo = sp_VisualOdometry(cam, pose_path)
 
 traj = np.zeros((600, 600, 3), dtype=np.uint8)
 
@@ -35,14 +36,14 @@ sp_feature_nums = []
 norm_feature_nums = []
 
 for img_id in range(4541):
-    img = cv2.imread('/home/user/Desktop/dataset/sequences/' +
+    img = cv2.imread(Kitti_path + '/sequences/' +
                      Num + '/image_0/' + str(img_id).zfill(6) + '.png', 0)
 
     # === superpoint ==============================
     sp_vo.update(img, img_id)
 
     sp_cur_t = sp_vo.cur_t
-    if(img_id > 2):
+    if (img_id > 2):
         sp_x, sp_y, sp_z = sp_cur_t[0], sp_cur_t[1], sp_cur_t[2]
     else:
         sp_x, sp_y, sp_z = 0., 0., 0.
@@ -55,7 +56,7 @@ for img_id in range(4541):
     vo.update(img, img_id)
 
     cur_t = vo.cur_t
-    if(img_id > 2):
+    if (img_id > 2):
         x, y, z = cur_t[0], cur_t[1], cur_t[2]
     else:
         x, y, z = 0., 0., 0.
@@ -112,6 +113,7 @@ for img_id in range(4541):
 
     cv2.imshow('Road facing camera', np.concatenate((sp_img, img), axis=0))
     cv2.imshow('Trajectory', traj)
-    cv2.waitKey(1)
+    if cv2.waitKey(1) == 27:
+        break
 
 cv2.imwrite('map.png', traj)
