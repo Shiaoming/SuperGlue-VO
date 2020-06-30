@@ -1,3 +1,5 @@
+## forked from [SuperPoint-VO](https://github.com/Shiaoming/SuperPoint-VO), trying to use [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork)
+
 ## SuperPoint-Visual Odometry (SP-VO)
 ### Abstract
 This Visual Odometry is a combination between 
